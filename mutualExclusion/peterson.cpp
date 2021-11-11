@@ -11,41 +11,26 @@ int ans = 0;
  
 void lock_init()
 {
-    // Initialize lock by reseting the desire of
-    // both the threads to acquire the locks.
-    // And, giving turn to one of them.
     flag[0] = flag[1] = 0;
     turn = 0;
 }
- 
-// Executed before entering critical section
+
 void lock(int self)
 {
-    // Set flag[self] = 1 saying you want to acquire lock
     flag[self] = 1;
- 
-    // But, first give the other thread the chance to
-    // acquire lock
+
     turn = 1-self;
- 
-    // Wait until the other thread looses the desire
-    // to acquire lock or it is your turn to get the lock.
+
     while (flag[1-self]==1 && turn==1-self){
         sched_yield();
     }
 }
- 
-// Executed after leaving critical section
+
 void unlock(int self)
 {
-    // You do not desire to acquire lock in future.
-    // This will allow the other thread to acquire
-    // the lock.
     flag[self] = 0;
 }
- 
-// A Sample function run by two threads created
-// in main()
+
 void* func(void *s)
 {
     int i = 0;
@@ -61,11 +46,9 @@ void* func(void *s)
  
     unlock(*self);
 }
- 
-// Driver code
+
 int main()
 {
-    // Initialized the lock then fork 2 threads
     pthread_t p1, p2;
     lock_init();
  
